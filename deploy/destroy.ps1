@@ -24,3 +24,11 @@ if ($labName) {
     }
 }
 
+# load common Azure functions
+. .\lib\AzCommon.ps1
+
+# Set the Azure subscription context
+Confirm-AzureLogin
+Set-SubscriptionContext -subscriptionID (Get-SubscriptionID -subscriptionName $subscriptionName)
+
+

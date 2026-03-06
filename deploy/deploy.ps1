@@ -12,12 +12,6 @@ param (
 
 $RESOURCE_GROUP_PREFIX = "CloudFun"
 
-# Check if azure CLI is installed
-if (-Not (Get-Command "az" -ErrorAction SilentlyContinue)) {
-    Write-Error "Azure CLI is not installed. Please install Azure CLI to use this deployment script."
-    exit 1
-}
-
 # Check if the lab name argument is provided
 if (-Not $labName) {
     Write-Error "Please provide the lab name as an argument. Example: .\deploy.ps1 -labName lab01-vm"
@@ -40,23 +34,12 @@ if ($null -eq $students) {
     exit 1
 }
 
-# Get subscription id
-try {
-    Write-Host "Getting subscription ID for subscription name '$subscriptionName'..."
-    $subscriptionId = az account list --query "[?name=='$subscriptionName'].id" -o tsv
-} catch {
-    Write-Error "Failed to get subscription ID. Please ensure the subscription name is correct and you have access to it."
-    exit 1
-}
+# load common Azure functions
+. .\lib\AzCommon.ps1
 
 # Set the Azure subscription context
-try {
-    Write-Host "Setting Azure subscription context..."
-    az account set --subscription $subscriptionId
-} catch {
-    Write-Error "Failed to set Azure subscription context. Please ensure the subscription name is correct and you have access to it."
-    exit 1
-}
+Confirm-AzureLogin
+Set-SubscriptionContext -subscriptionID (Get-SubscriptionID -subscriptionName $subscriptionName)
 
 # Deploy
 
