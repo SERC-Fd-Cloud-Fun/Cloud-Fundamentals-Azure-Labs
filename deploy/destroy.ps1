@@ -10,11 +10,7 @@ param (
     [string]$subscriptionName = "Cloud Fundamentals Labs"
 )
 
-# check if azure CLI is installed
-if (-Not (Get-Command "az" -ErrorAction SilentlyContinue)) {
-    Write-Error "Azure CLI is not installed. Please install Azure CLI to use this teardown script."
-    exit 1
-}
+$RESOURCE_GROUP_PREFIX = "CloudFun"
 
 # Check if lab name is provided and valid (you can add more lab names as needed)
 if ($labName) {
@@ -31,4 +27,26 @@ if ($labName) {
 Confirm-AzureLogin
 Set-SubscriptionContext -subscriptionID (Get-SubscriptionID -subscriptionName $subscriptionName)
 
+# get list of resource groups to delete based on lab name argument
+if ($labName) {
+    $resourceGroups = az group list --query "[?starts_with(name, '$RESOURCE_GROUP_PREFIX-$labName')].name" -o tsv
+} else {
+    $resourceGroups = az group list --query "[?starts_with(name, '$RESOURCE_GROUP_PREFIX')].name" -o tsv
+}
 
+# Output information about the resource groups to be deleted and ask for confirmation
+Write-Host "The following resource groups will be deleted:"
+foreach ($rg in $resourceGroups) {
+    Write-Host " - $rg"
+}
+$confirmation = Read-Host "Do you want to proceed with deleting these resource groups? (yes/no)"
+if ($confirmation -ne "yes") {
+    Write-Host "Resource group deletion cancelled by user."
+    exit 0
+}
+
+# Delete the resource groups
+foreach ($rg in $resourceGroups) {
+    Write-Host "Deleting resource group '$rg'..."
+    az group delete --name $rg --yes --no-wait
+}
