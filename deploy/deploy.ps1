@@ -2,10 +2,12 @@
 
 # arguments for deployment script
 # - lab name (e.g. lab01-vm, lab02-storage, lab03-networking)
+# - cohort name (optional, default is "Y11002DF1A_2526")
 # - student list CSV file (e.g. students.csv) [optional]
 # - subscription name (optional, default is "Cloud Fundamentals Labs")
 param (
     [string]$labName,
+    [string]$cohortName = "Y11002DF1A_2526",
     [string]$studentListPath = ".\students.csv",
     [string]$subscriptionName = "Cloud Fundamentals Labs"
 )
