@@ -2,6 +2,32 @@
 
 In this lab, you will learn how to set up a web server and a database server on virtual machines in Azure. You will install the necessary software and configure the servers to serve a simple web page and manage a database.
 
+## Architecture overview
+
+The following diagram shows the target architecture used in this lab.
+
+```mermaid
+flowchart LR
+    Internet[Internet / Student Browser]
+    DNS[Dynamic DNS
+    <student-subdomain>.cloud-it.cloud]
+
+    subgraph AzureVNet[Azure Virtual Network]
+        WebVM[lab4-web-vm
+        Ubuntu + Apache + PHP
+        Public IP enabled]
+        DbVM[lab4-db-vm
+        Ubuntu + MariaDB
+        No Public IP]
+    end
+
+    Internet -->|HTTP/HTTPS 80/443| WebVM
+    Internet -->|SSH 22| WebVM
+    DNS -. resolves to .-> WebVM
+    WebVM -->|MySQL 3306| DbVM
+    WebVM -->|SSH 22 for admin| DbVM
+```
+
 ## Learning objectives
 
 By the end of this lab, you should be able to:
