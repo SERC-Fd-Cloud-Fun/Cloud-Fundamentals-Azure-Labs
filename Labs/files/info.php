@@ -73,7 +73,13 @@ function h(string $value): string {
 }
 
 function row(string $label, string $value, bool $raw = false): void {
-    $cell = $raw ? $value : ('<td>' . h($value ?: '') . ($value === '' ? '<span class="empty">unavailable</span>' : '') . '</td>');
+    if ($raw) {
+        $cell = $value;
+    } elseif ($value === '') {
+        $cell = '<td><span class="empty">unavailable</span></td>';
+    } else {
+        $cell = '<td>' . h($value) . '</td>';
+    }
     echo "<tr><th>" . h($label) . "</th>$cell</tr>\n";
 }
 
