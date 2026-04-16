@@ -13,6 +13,7 @@ By the end of this lab, you should be able to:
 - Configure inbound networking rules for VM access
 - Connect to VMs using SSH public key authentication
 - Install and validate Apache, PHP, and MySQL on Ubuntu
+- Deploy a PHP page that reports VM details and database connectivity
 - Update reverse DNS using a provided HTTP endpoint
 
 ## Prerequisites
@@ -60,7 +61,7 @@ Run the following on the web VM:
 
 ```bash
 sudo apt update
-sudo apt install -y apache2 php libapache2-mod-php
+sudo apt install -y apache2 php libapache2-mod-php php-mysql
 ```
 
 ### 4. Validate Apache is working
@@ -191,11 +192,96 @@ fi
 
 sudo mysql <<SQL
 CREATE DATABASE lab4app;
-CREATE USER 'lab4user'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
-GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'localhost';
+CREATE USER 'lab4user'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'%';
 FLUSH PRIVILEGES;
 SQL
 ```
+
+> The `'%'` host wildcard allows the web VM to connect remotely. In production you would restrict this to a specific IP address.
+
+### 5. Allow remote MySQL connections
+
+By default, MySQL only listens on the loopback interface. Edit the configuration to accept connections from the web VM:
+
+```bash
+sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+sudo systemctl restart mysql
+```
+
+Confirm MySQL is now listening on all interfaces:
+
+```bash
+sudo ss -tlnp | grep 3306
+```
+
+### 6. Open NSG inbound rule for MySQL
+
+By default, port 3306 is not exposed publicly and was not opened when you created the database VM. You will add a narrow inbound rule scoped to the web VM's **private IP** only:
+
+1. In Azure portal, navigate to the database VM's **Network security group**.
+2. Go to **Inbound security rules** > **Add**.
+3. Configure:
+   - **Source**: `IP Addresses`
+   - **Source IP address**: the **private IP** of the web VM (shown on the web VM Overview page)
+   - **Destination port ranges**: `3306`
+   - **Protocol**: `TCP`
+   - **Action**: `Allow`
+   - **Priority**: `400` (or any value lower than any existing Deny rules)
+   - **Name**: `Allow-MySQL-from-WebVM`
+4. Save the rule.
+
+---
+
+## Exercise 3 - Deploy and test the info page
+
+The `Labs/files/info.php` file in this repository displays the web VM's details (hostname, VM size, location, etc.) and tests the database connection. Follow the steps below to deploy it.
+
+### 1. Copy the file to the web VM
+
+From your **local machine**, use `scp` to upload the file:
+
+```bash
+scp -i <path-to-private-key> \
+    Labs/files/info.php \
+    <admin-user>@<web-vm-public-ip>:/home/<admin-user>/info.php
+```
+
+### 2. Edit the database credentials
+
+On the web VM, open the file and replace the two placeholders at the top:
+
+```bash
+nano ~/info.php
+```
+
+Update these lines:
+
+```php
+define('DB_HOST',     '<database-vm-private-ip>');  // ← replace with DB VM private IP
+define('DB_PASSWORD', '<your-database-password>');  // ← replace with the password you set
+```
+
+Save the file (`Ctrl+O`, `Enter`, `Ctrl+X`).
+
+### 3. Deploy the file to Apache's web root
+
+```bash
+sudo mv ~/info.php /var/www/html/info.php
+sudo chown www-data:www-data /var/www/html/info.php
+```
+
+### 4. Test the page in a browser
+
+Open `http://<web-vm-public-ip>/info.php`.
+
+- The **Web Server VM** table should show the VM hostname, size, and location.
+- The **Database Connection** table should show a green **Connected successfully** badge.
+
+If the connection fails, check:
+- The private IP and password in `/var/www/html/info.php` are correct.
+- The NSG inbound rule on the database VM allows port 3306 from the web VM's private IP.
+- MySQL is listening on port 3306: `sudo ss -tlnp | grep 3306` on the database VM.
 
 ---
 
@@ -204,12 +290,15 @@ SQL
 Before submitting, verify all items:
 - [ ] Web VM created with Ubuntu, B1s, SSH key auth
 - [ ] Web VM inbound ports include 22, 80, 443
-- [ ] Apache and PHP installed on web VM
+- [ ] Apache, PHP, and php-mysql installed on web VM
 - [ ] Apache default page is reachable in browser
 - [ ] Reverse DNS update script created and executed
 - [ ] Database VM created with Ubuntu, B1s, SSH key auth
 - [ ] MySQL installed and running on database VM
 - [ ] Sample database and database user created successfully
+- [ ] MySQL configured to accept remote connections (`bind-address`)
+- [ ] NSG inbound rule opens 3306 from the web VM's private IP
+- [ ] `info.php` deployed and shows VM details and green connection badge
 
 ## Deliverables
 
@@ -219,3 +308,4 @@ Submit:
 - Screenshot of Apache default page in browser
 - Output (or screenshot) from `./update-dns.sh`
 - Output (or screenshot) showing MySQL version and created database
+- Screenshot of `info.php` in browser showing VM details and the green **Connected successfully** badge
