@@ -39,7 +39,7 @@ function get_vm_metadata(): array {
 $meta    = get_vm_metadata();
 $compute = $meta['compute'] ?? [];
 
-// ---- MySQL connection test -------------------------------------------
+// ---- MariaDB connection test -------------------------------------------
 
 $db_status  = '';
 $db_class   = '';
@@ -188,7 +188,7 @@ function row(string $label, string $value, bool $raw = false): void {
     </tr>
     <?php if ($db_version !== ''): ?>
     <tr>
-      <th>MySQL Version</th>
+      <th>MariaDB Version</th>
       <td><?= h($db_version) ?></td>
     </tr>
     <?php endif; ?>

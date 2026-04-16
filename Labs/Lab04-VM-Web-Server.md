@@ -2,7 +2,7 @@
 
 In this lab, you will create two Azure virtual machines using the Azure portal:
 - A **web server VM** (Ubuntu + Apache + PHP)
-- A **database VM** (Ubuntu + MySQL)
+- A **database VM** (Ubuntu + MariaDB)
 
 You will use a provided Azure subscription, install software manually on each VM, and configure DNS for the web server.
 
@@ -12,7 +12,7 @@ By the end of this lab, you should be able to:
 - Create Linux virtual machines from the Azure portal
 - Configure inbound networking rules for VM access
 - Connect to VMs using SSH public key authentication
-- Install and validate Apache, PHP, and MySQL on Ubuntu
+- Install and validate Apache, PHP, and MariaDB on Ubuntu
 - Deploy a PHP page that reports VM details and database connectivity
 - Update reverse DNS using a provided HTTP endpoint
 
@@ -131,16 +131,16 @@ chmod +x update-dns.sh
    - **Authentication type**: `SSH public key`
 2. For inbound ports:
    - Allow **SSH (22)**
-   - Do **not** expose MySQL (3306) publicly unless your instructor explicitly requires it
+   - Do **not** expose MariaDB (3306) publicly unless your instructor explicitly requires it
 3. Review and create the VM.
 
-### 2. Connect and install MySQL
+### 2. Connect and install MariaDB
 
 SSH into the database VM and run:
 
 ```bash
 sudo apt update
-sudo apt install -y mysql-server
+sudo apt install -y mariadb-server
 ```
 
 ### 3. Validate database service
@@ -148,13 +148,13 @@ sudo apt install -y mysql-server
 1. Check service state:
 
 ```bash
-sudo systemctl status mysql
+sudo systemctl status mariadb
 ```
 
-2. Verify MySQL responds:
+2. Verify MariaDB responds:
 
 ```bash
-sudo mysql -e "SELECT VERSION();"
+sudo mariadb -e "SELECT VERSION();"
 ```
 
 ### 4. Create a sample database and user
@@ -197,7 +197,7 @@ if ! [[ "${DB_PASSWORD}" =~ [^A-Za-z0-9] ]]; then
   exit 1
 fi
 
-sudo mysql <<SQL
+sudo mariadb <<SQL
 CREATE DATABASE lab4app;
 CREATE USER 'lab4user'@'${WEB_VM_PRIVATE_IP}' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'${WEB_VM_PRIVATE_IP}';
@@ -205,24 +205,24 @@ FLUSH PRIVILEGES;
 SQL
 ```
 
-> Scoping the MySQL user to the web VM's private IP restricts database access to that VM only. This provides defense in depth alongside the NSG rule added in step 6.
+> Scoping the MariaDB user to the web VM's private IP restricts database access to that VM only. This provides defense in depth alongside the NSG rule added in step 6.
 
-### 5. Allow remote MySQL connections
+### 5. Allow remote MariaDB connections
 
-By default, MySQL only listens on the loopback interface. Edit the configuration to accept connections from the web VM:
+By default, MariaDB only listens on the loopback interface. Edit the configuration to accept connections from the web VM:
 
 ```bash
-sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
-sudo systemctl restart mysql
+sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+sudo systemctl restart mariadb
 ```
 
-Confirm MySQL is now listening on all interfaces:
+Confirm MariaDB is now listening on all interfaces:
 
 ```bash
 sudo ss -tlnp | grep 3306
 ```
 
-### 6. Open NSG inbound rule for MySQL
+### 6. Open NSG inbound rule for MariaDB
 
 By default, port 3306 is not exposed publicly and was not opened when you created the database VM. You will add a narrow inbound rule scoped to the web VM's **private IP** only:
 
@@ -235,7 +235,7 @@ By default, port 3306 is not exposed publicly and was not opened when you create
    - **Protocol**: `TCP`
    - **Action**: `Allow`
    - **Priority**: `400` (or any value lower than any existing Deny rules)
-   - **Name**: `Allow-MySQL-from-WebVM`
+   - **Name**: `Allow-MariaDB-from-WebVM`
 4. Save the rule.
 
 ---
@@ -288,7 +288,7 @@ Open `http://<web-vm-public-ip>/info.php`.
 If the connection fails, check:
 - The private IP and password in `/var/www/html/info.php` are correct.
 - The NSG inbound rule on the database VM allows port 3306 from the web VM's private IP.
-- MySQL is listening on port 3306: `sudo ss -tlnp | grep 3306` on the database VM.
+- MariaDB is listening on port 3306: `sudo ss -tlnp | grep 3306` on the database VM.
 
 ---
 
@@ -301,9 +301,9 @@ Before submitting, verify all items:
 - [ ] Apache default page is reachable in browser
 - [ ] Reverse DNS update script created and executed
 - [ ] Database VM created with Ubuntu, B1s, SSH key auth
-- [ ] MySQL installed and running on database VM
+- [ ] MariaDB installed and running on database VM
 - [ ] Sample database and database user created successfully
-- [ ] MySQL configured to accept remote connections (`bind-address`)
+- [ ] MariaDB configured to accept remote connections (`bind-address`)
 - [ ] NSG inbound rule opens 3306 from the web VM's private IP
 - [ ] `info.php` deployed and shows VM details and green connection badge
 
@@ -314,5 +314,5 @@ Submit:
 - Database VM name and public IP
 - Screenshot of Apache default page in browser
 - Output (or screenshot) from `./update-dns.sh`
-- Output (or screenshot) showing MySQL version and created database
+- Output (or screenshot) showing MariaDB version and created database
 - Screenshot of `info.php` in browser showing VM details and the green **Connected successfully** badge
