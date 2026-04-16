@@ -100,7 +100,7 @@ nano update_dns.sh
 ```bash
 #!/bin/bash
 # Use your assigned student/team subdomain value.
-SUBDOMAIN="<your-subdomain>"
+SUBDOMAIN="<your studentid number>"
 UPDATE_TOKEN="<your-update-token>"
 
 # Use the provided HTTP endpoint to update the reverse DNS record
