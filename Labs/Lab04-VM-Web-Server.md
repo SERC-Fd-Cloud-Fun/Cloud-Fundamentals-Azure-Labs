@@ -149,7 +149,7 @@ Run in MySQL:
 ```bash
 sudo mysql <<'SQL'
 CREATE DATABASE lab4app;
-CREATE USER 'lab4user'@'localhost' IDENTIFIED BY 'ChangeThisPassword!';
+CREATE USER 'lab4user'@'localhost' IDENTIFIED BY 'REPLACE_WITH_STRONG_PASSWORD';
 GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'localhost';
 FLUSH PRIVILEGES;
 SQL
