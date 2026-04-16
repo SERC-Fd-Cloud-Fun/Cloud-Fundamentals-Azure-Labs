@@ -95,8 +95,8 @@ if [ "${SUBDOMAIN}" = "<your-subdomain>" ]; then
   exit 1
 fi
 
-if ! [[ "${SUBDOMAIN}" =~ ^[a-z0-9-]+$ ]]; then
-  echo "Error: SUBDOMAIN can only contain lowercase letters, numbers, and hyphens."
+if ! [[ "${SUBDOMAIN}" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]]; then
+  echo "Error: SUBDOMAIN must start/end with a letter or number and only use lowercase letters, numbers, or hyphens."
   exit 1
 fi
 
@@ -169,8 +169,23 @@ if [ "${DB_PASSWORD}" = "<CHANGE_ME>" ]; then
   exit 1
 fi
 
-if [ "${#DB_PASSWORD}" -lt 12 ] || ! [[ "${DB_PASSWORD}" =~ [A-Za-z] ]] || ! [[ "${DB_PASSWORD}" =~ [0-9] ]] || ! [[ "${DB_PASSWORD}" =~ [^A-Za-z0-9] ]]; then
-  echo "Error: DB_PASSWORD must be at least 12 characters and include letters, numbers, and symbols."
+if [ "${#DB_PASSWORD}" -lt 12 ]; then
+  echo "Error: DB_PASSWORD must be at least 12 characters."
+  exit 1
+fi
+
+if ! [[ "${DB_PASSWORD}" =~ [A-Za-z] ]]; then
+  echo "Error: DB_PASSWORD must include at least one letter."
+  exit 1
+fi
+
+if ! [[ "${DB_PASSWORD}" =~ [0-9] ]]; then
+  echo "Error: DB_PASSWORD must include at least one number."
+  exit 1
+fi
+
+if ! [[ "${DB_PASSWORD}" =~ [^A-Za-z0-9] ]]; then
+  echo "Error: DB_PASSWORD must include at least one symbol."
   exit 1
 fi
 
