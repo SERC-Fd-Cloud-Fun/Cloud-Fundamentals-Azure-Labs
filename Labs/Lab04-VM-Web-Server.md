@@ -89,8 +89,19 @@ nano update-dns.sh
 #!/usr/bin/env bash
 # Use your assigned student/team subdomain value.
 SUBDOMAIN="<your-subdomain>"
+
+if [ "${SUBDOMAIN}" = "<your-subdomain>" ]; then
+  echo "Error: replace <your-subdomain> with your assigned subdomain value."
+  exit 1
+fi
+
+if ! [[ "${SUBDOMAIN}" =~ ^[a-z0-9-]+$ ]]; then
+  echo "Error: SUBDOMAIN can only contain lowercase letters, numbers, and hyphens."
+  exit 1
+fi
+
 # Use HTTPS for the DNS update call.
-curl "https://func.cloud-it.cloud/api/UpdateDNS?subdomain=${SUBDOMAIN}"
+curl --fail --show-error --silent "https://func.cloud-it.cloud/api/UpdateDNS?subdomain=${SUBDOMAIN}"
 ```
 
 3. Save and make it executable:
@@ -155,6 +166,11 @@ sudo mysql -e "SELECT VERSION();"
 DB_PASSWORD="<CHANGE_ME>"
 if [ "${DB_PASSWORD}" = "<CHANGE_ME>" ]; then
   echo "Error: DB_PASSWORD must be set to a strong value. Update the variable and run again."
+  exit 1
+fi
+
+if [ "${#DB_PASSWORD}" -lt 12 ] || ! [[ "${DB_PASSWORD}" =~ [A-Za-z] ]] || ! [[ "${DB_PASSWORD}" =~ [0-9] ]] || ! [[ "${DB_PASSWORD}" =~ [^A-Za-z0-9] ]]; then
+  echo "Error: DB_PASSWORD must be at least 12 characters and include letters, numbers, and symbols."
   exit 1
 fi
 
