@@ -73,7 +73,7 @@ sudo systemctl status apache2
 
 2. In a browser, open `http://<web-vm-public-ip>`.
 3. Confirm the default Apache page loads before continuing.
-4. HTTPS (443) is opened now for later use, but TLS is not configured yet in this lab.
+4. HTTPS (443) is opened now for future labs; this is informational only and no HTTPS validation is required in this lab.
 
 ### 5. Create and run reverse DNS update script
 
@@ -152,7 +152,7 @@ sudo mysql -e "SELECT VERSION();"
 ```bash
 DB_PASSWORD="<CHANGE_ME>"
 if [ "${DB_PASSWORD}" = "<CHANGE_ME>" ]; then
-  echo "Set DB_PASSWORD to a strong value before running this command."
+  echo "Error: DB_PASSWORD must be set to a strong value. Update the variable and run again."
   exit 1
 fi
 
