@@ -87,6 +87,7 @@ nano update-dns.sh
 ```bash
 #!/usr/bin/env bash
 SUBDOMAIN="<your-subdomain>"
+# Use HTTPS for the DNS update call.
 curl "https://func.cloud-it.cloud/api/UpdateDNS?subdomain=${SUBDOMAIN}"
 ```
 
@@ -144,18 +145,24 @@ sudo mysql -e "SELECT VERSION();"
 
 ### 4. Create a sample database and user
 
-Run in MySQL:
+Run:
 
 ```bash
-sudo mysql <<'SQL'
+DB_PASSWORD="<CHANGE_ME>"
+if [ "${DB_PASSWORD}" = "<CHANGE_ME>" ]; then
+  echo "Set DB_PASSWORD to a strong value before running this command."
+  exit 1
+fi
+
+sudo mysql <<SQL
 CREATE DATABASE lab4app;
-CREATE USER 'lab4user'@'localhost' IDENTIFIED BY 'REPLACE_WITH_STRONG_PASSWORD';
+CREATE USER 'lab4user'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'localhost';
 FLUSH PRIVILEGES;
 SQL
 ```
 
-> Replace the sample password with a stronger value before submission.
+> Replace `<CHANGE_ME>` with your strong password before running.
 
 ---
 
