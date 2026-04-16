@@ -165,8 +165,15 @@ sudo mysql -e "SELECT VERSION();"
 ```bash
 # Use at least 12 characters with letters, numbers, and symbols.
 DB_PASSWORD="<CHANGE_ME>"
+WEB_VM_PRIVATE_IP="<web-vm-private-ip>"   # ← replace with the web VM's private IP
+
 if [ "${DB_PASSWORD}" = "<CHANGE_ME>" ]; then
   echo "Error: DB_PASSWORD must be set to a strong value. Update the variable and run again."
+  exit 1
+fi
+
+if [ "${WEB_VM_PRIVATE_IP}" = "<web-vm-private-ip>" ]; then
+  echo "Error: WEB_VM_PRIVATE_IP must be set to the web VM's private IP. Update the variable and run again."
   exit 1
 fi
 
@@ -192,13 +199,13 @@ fi
 
 sudo mysql <<SQL
 CREATE DATABASE lab4app;
-CREATE USER 'lab4user'@'%' IDENTIFIED BY '${DB_PASSWORD}';
-GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'%';
+CREATE USER 'lab4user'@'${WEB_VM_PRIVATE_IP}' IDENTIFIED BY '${DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'${WEB_VM_PRIVATE_IP}';
 FLUSH PRIVILEGES;
 SQL
 ```
 
-> The `'%'` host wildcard allows the web VM to connect remotely. In production you would restrict this to a specific IP address.
+> Scoping the MySQL user to the web VM's private IP restricts database access to that VM only. This provides defense in depth alongside the NSG rule added in step 6.
 
 ### 5. Allow remote MySQL connections
 
