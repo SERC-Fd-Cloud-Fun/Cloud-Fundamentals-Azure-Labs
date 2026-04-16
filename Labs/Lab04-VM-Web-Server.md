@@ -73,7 +73,7 @@ sudo systemctl status apache2
 
 2. In a browser, open `http://<web-vm-public-ip>`.
 3. Confirm the default Apache page loads before continuing.
-4. HTTPS (443) is open now for future labs; this is informational only and no HTTPS validation is required in this lab.
+4. Port 443 (HTTPS) has been opened to prepare for future labs, but HTTPS configuration is not required for this lab.
 
 ### 5. Create and run reverse DNS update script
 
@@ -87,6 +87,7 @@ nano update-dns.sh
 
 ```bash
 #!/usr/bin/env bash
+# Use your assigned student/team subdomain value.
 SUBDOMAIN="<your-subdomain>"
 # Use HTTPS for the DNS update call.
 curl "https://func.cloud-it.cloud/api/UpdateDNS?subdomain=${SUBDOMAIN}"
@@ -150,6 +151,7 @@ sudo mysql -e "SELECT VERSION();"
 2. Run:
 
 ```bash
+# Use at least 12 characters with letters, numbers, and symbols.
 DB_PASSWORD="<CHANGE_ME>"
 if [ "${DB_PASSWORD}" = "<CHANGE_ME>" ]; then
   echo "Error: DB_PASSWORD must be set to a strong value. Update the variable and run again."
