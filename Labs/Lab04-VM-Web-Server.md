@@ -73,7 +73,7 @@ sudo systemctl status apache2
 
 2. In a browser, open `http://<web-vm-public-ip>`.
 3. Confirm the default Apache page loads before continuing.
-4. HTTPS (443) is opened now for future labs; this is informational only and no HTTPS validation is required in this lab.
+4. HTTPS (443) is open now for future labs; this is informational only and no HTTPS validation is required in this lab.
 
 ### 5. Create and run reverse DNS update script
 
@@ -163,8 +163,6 @@ GRANT ALL PRIVILEGES ON lab4app.* TO 'lab4user'@'localhost';
 FLUSH PRIVILEGES;
 SQL
 ```
-
-> Replace `<CHANGE_ME>` with your strong password before running.
 
 ---
 
