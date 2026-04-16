@@ -13,10 +13,10 @@ flowchart LR
     <student-subdomain>.cloud-it.cloud]
 
     subgraph AzureVNet[Azure Virtual Network]
-        WebVM[lab4-web-vm
+        WebVM[**lab4-web-vm**
         Ubuntu + Apache + PHP
         Public IP enabled]
-        DbVM[lab4-db-vm
+        DbVM[**lab4-db-vm**
         Ubuntu + MariaDB
         No Public IP]
     end
