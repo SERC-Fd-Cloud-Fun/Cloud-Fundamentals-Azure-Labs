@@ -429,6 +429,17 @@ Make sure to replace `your_secure_password` with the password you set for the `w
 
 ---
 
+## Finally
+
+Make sure to clean up your resources after completing the lab to avoid unnecessary costs. You can delete the resource group you created, which will remove all associated resources:
+
+1. In the Azure portal, navigate to "Resource groups".
+2. Find the resource group you created for this lab (e.g., `CloudFun-Lab04-WebServer-<your studentid number>`).
+3. Click on the resource group, then click "Delete resource group".
+4. Confirm the deletion by typing the resource group name and clicking "Delete".
+
+---
+
 ## Conclusion
 
 In this lab, you successfully created and configured two virtual machines in Azure: one for hosting a web server and another for hosting a database server. You installed Apache, PHP, and MariaDB on the respective VMs, set up secure communication between them, and deployed a PHP page that displays VM details and tests database connectivity. Additionally, you configured reverse DNS for the web server VM to allow access via a custom subdomain. This lab provided hands-on experience with virtual machine management, network security configuration, and web/database server setup in Azure.
