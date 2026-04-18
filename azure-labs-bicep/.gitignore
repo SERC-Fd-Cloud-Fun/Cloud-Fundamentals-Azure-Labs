@@ -1,0 +1,18 @@
+# Azure CLI session files
+.azure/
+
+# Bicep compiled ARM templates (if generated locally)
+*.json
+!**/azuredeploy.json
+
+# Environment / secrets
+.env
+*.env.local
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/*.code-workspace
+.idea/
