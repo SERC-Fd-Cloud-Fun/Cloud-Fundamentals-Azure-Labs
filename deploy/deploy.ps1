@@ -64,17 +64,33 @@ if ($confirmation -ne "yes") {
 }
 
 # deploy policy definitions and initiatives (if any) to the subscription
-
+Write-Host "Deploying policy definitions for lab '$labName'..."
+$POLICY_DEPLOYMENT_NAME = "deploy-policies-$labName-$(Get-Date -Format "yyyyMMddHHmmss")"
+az deployment sub create `
+    --name $POLICY_DEPLOYMENT_NAME `
+    --location uksouth `
+    --parameters ".\bicep\$labName\policies.bicepparam"
 
 # Loop through each student and output their information (for demonstration purposes)
 foreach ($student in $students) {
     Write-Host "Deploying resources for student: $($student.Name) (ID: $($student.StudentID), ObjectID: $($student.ObjectID))"
 
-
+    $RESOURCE_GROUP_NAME = "$RESOURCE_GROUP_PREFIX-$labName-$($student.StudentID)"
     $DEPLOYMENT_NAME = "deploy-cloudfun-$($labName)-$($student.StudentID)-$(Get-Date -Format "yyyyMMddHHmmss")"
-    
-    # Here you would add the code to deploy resources for each student using their ObjectID
-    # For example, you could use Azure CLI or Azure PowerShell commands to create resources in Azure
-    # Example (pseudo-code):
-    # az deployment group create --resource-group myResourceGroup --template-file main.bicep --parameters studentObjectId=$($student.ObjectID)
+
+    az deployment sub create `
+        --name $DEPLOYMENT_NAME `
+        --location uksouth `
+        --template-file ".\bicep\$labName\main.bicep" `
+        --parameters studentName=$($student.Name) `
+                     studentID=$($student.StudentID) `
+                     studentObjectID=$($student.ObjectID) `
+                     resourceGroupName=$RESOURCE_GROUP_NAME `
+                     location=uksouth
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Deployment failed for student '$($student.Name)' (ID: $($student.StudentID))."
+    } else {
+        Write-Host "Deployment succeeded for student '$($student.Name)' (ID: $($student.StudentID))."
+    }
 }
