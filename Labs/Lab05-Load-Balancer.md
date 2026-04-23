@@ -4,7 +4,38 @@ In this lab, you will build a simple load-balanced web application using Azure V
 
 ## Architecture overview
 
-[TODO]
+The following diagram shows the target architecture used in this lab.
+
+```mermaid
+flowchart TB
+    U[Client Browser] --> LB[Azure Load Balancer\nFrontend IP]
+
+    subgraph RG[Resource Group: CloudFun-Lab05-LoadBalancer-<studentid>]
+        subgraph VNET[Virtual Network: lab5-vnet]
+            LB
+            HP
+            subgraph SUBNET[Subnet: lab5-vm-subnet]
+                VM1[VM 1: lab5-vm1
+                Apache + PHP]
+                VM2[VM 2: lab5-vm2
+                Apache + PHP]
+                VM3[VM 3: lab5-vm3
+                Apache + PHP
+                Provisioned with cloud-init]
+            end
+        end
+    end
+
+    LB --> VM1
+    LB --> VM2
+    LB --> VM3
+
+    HP[Health Probe: HTTP / on port 80] -. monitors .-> VM1
+    HP -. monitors .-> VM2
+    HP -. monitors .-> VM3
+```
+
+The health probe is a continuous check that the load balancer runs against each VM (HTTP request to `/` on port `80`). If a VM stops responding or returns failures, Azure marks it unhealthy and temporarily removes it from the backend rotation. This prevents users from being sent to broken instances and improves the application's availability.
 
 ## Learning Objectives
 
@@ -176,6 +207,7 @@ echo "<?php echo 'Hello from ' . gethostname(); ?>" | sudo tee /var/www/html/ind
     - Port: **80**
     - Path: `/`
     - Interval: 5 seconds
+
 7. Click "Add" to create the health probe.
 8. Finally, go to "Load balancing rules" and click "Add".
 9. Fill in the details:
