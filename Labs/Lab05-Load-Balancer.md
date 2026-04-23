@@ -117,6 +117,21 @@ az vm create \
   --subnet lab5-vm-subnet
 ```
 
+For the second VM, change the name to `lab5-vm2` in the above command. If you are using Azure Cloud shell, use the same ssh key from the first VM:
+
+```bash
+az vm create \
+  --resource-group CloudFun-Lab05-LoadBalancer-<your studentid number> \
+  --location "<your region>" \
+  --name lab5-vm2 \
+  --image Ubuntu2404 \
+  --size Standard_B1s \
+  --admin-username azureuser \
+  --ssh-key-value ~/.ssh/id_rsa.pub \
+  --vnet-name lab5-vnet \
+  --subnet lab5-vm-subnet
+```
+
 And open the necessary ports:
 
 ```bash
@@ -132,6 +147,7 @@ az vm open-port --resource-group CloudFun-Lab05-LoadBalancer-<your studentid num
    ```bash
    ssh -i /path/to/your/private/key azureuser@<public-ip-address>
    ```
+   (If you are using Azure Cloud Shell, you can omit the `-i` option since the SSH keys are already available in the cloud shell environment.)
 4. Repeat the above steps to connect to `lab5-vm2`. (Use a separate terminal window for each VM.)
 
 ### 3. Install Apache and PHP
