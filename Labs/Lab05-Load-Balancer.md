@@ -272,7 +272,7 @@ In this exercise, you will provision a new VM using cloud-init to automate the i
     - Inbound ports: allow:
         - SSH (22)
         - HTTP (80)
-3. Under "Management", expand the "Cloud-init" section and paste the following cloud-init script:
+3. Under "Advanced", expand the "Custom data and cloud init" section and paste the following cloud-init script into the "Custom data" field:
 ```yaml
 #cloud-config
 packages:
