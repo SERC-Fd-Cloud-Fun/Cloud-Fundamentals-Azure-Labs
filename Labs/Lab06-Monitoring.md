@@ -30,10 +30,10 @@ Use low-cost settings and only create resources in your assigned subscription an
 ## Before You Start
 
 1. Sign in to the Azure portal: https://portal.azure.com
-2. Confirm your assigned subscription with your tutor.
-3. Choose a region close to your location.
-4. Use this naming pattern (replace `xx` with your initials or student ID):
-   - Resource group: `rg-monitoring-xx`
+2. Use the required subscription: `Cloud Fundamentals Labs`.
+3. Use your assigned resource group: `CloudFun-Lab-Monitoring-xx`.
+4. Your role is `Contributor` in this resource group.
+5. Use this naming pattern (replace `xx` with your student ID):
    - VNet: `vnet-monitoring-xx`
    - VM: `vm-monitoring-xx`
    - Storage account: `stmonitorxx` (must be globally unique, lowercase, no hyphens)
@@ -41,15 +41,11 @@ Use low-cost settings and only create resources in your assigned subscription an
 
 ---
 
-## Task 1 - Create a Resource Group
+## Task 1 - Open the Assigned Resource Group
 
 1. In Azure portal, search for `Resource groups`.
-2. Select `+ Create`.
-3. Set:
-   - Subscription: your assigned subscription
-   - Resource group: `rg-monitoring-xx`
-   - Region: your chosen region
-4. Select `Review + create`, then `Create`.
+2. Open your assigned resource group: `CloudFun-Lab-Monitoring-xx`.
+3. Verify the subscription shown is `Cloud Fundamentals Labs`.
 
 ---
 
@@ -58,9 +54,10 @@ Use low-cost settings and only create resources in your assigned subscription an
 1. Search for `Virtual networks`.
 2. Select `+ Create`.
 3. Configure:
-   - Resource group: `rg-monitoring-xx`
+   - Subscription: `Cloud Fundamentals Labs`
+   - Resource group: `CloudFun-Lab-Monitoring-xx`
    - Name: `vnet-monitoring-xx`
-   - Region: same as resource group
+   - Region: same as the resource group
 4. In `IP addresses`, keep default IPv4 range.
 5. Keep one default subnet (or create `subnet-default`).
 6. Select `Review + create`, then `Create`.
@@ -72,7 +69,8 @@ Use low-cost settings and only create resources in your assigned subscription an
 1. Search for `Virtual machines`.
 2. Select `+ Create` > `Azure virtual machine`.
 3. In `Basics`, configure:
-   - Resource group: `rg-monitoring-xx`
+   - Subscription: `Cloud Fundamentals Labs`
+   - Resource group: `CloudFun-Lab-Monitoring-xx`
    - Virtual machine name: `vm-monitoring-xx`
    - Region: same region
    - Availability options: `No infrastructure redundancy required`
@@ -94,7 +92,8 @@ Note: You do not need to log in to the VM for this lab.
 1. Search for `Storage accounts`.
 2. Select `+ Create`.
 3. Configure:
-   - Resource group: `rg-monitoring-xx`
+   - Subscription: `Cloud Fundamentals Labs`
+   - Resource group: `CloudFun-Lab-Monitoring-xx`
    - Storage account name: `stmonitorxx`
    - Region: same region
    - Primary service: `Azure Blob Storage or Azure Data Lake Storage Gen2`
@@ -118,7 +117,8 @@ Note: You do not need to log in to the VM for this lab.
 1. Search for `Load balancers`.
 2. Select `+ Create`.
 3. Configure:
-   - Resource group: `rg-monitoring-xx`
+   - Subscription: `Cloud Fundamentals Labs`
+   - Resource group: `CloudFun-Lab-Monitoring-xx`
    - Name: `lb-monitoring-xx`
    - Region: same region
    - Type: `Public`
@@ -147,7 +147,7 @@ Note: A backend pool is not required for this monitoring lab.
 
 ### 7A. Open VM Monitoring
 
-1. Go to `Resource groups` > `rg-monitoring-xx`.
+1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx`.
 2. Open `vm-monitoring-xx`.
 3. In the left menu, open `Monitoring` > `Alerts`.
 
@@ -185,7 +185,7 @@ Note: A backend pool is not required for this monitoring lab.
 
 ## Task 8 - VNet Monitoring
 
-1. Go to `Resource groups` > `rg-monitoring-xx` > `vnet-monitoring-xx`.
+1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx` > `vnet-monitoring-xx`.
 2. Open `Monitoring` > `Metrics`.
 3. Select a metric namespace and inspect available metrics.
 4. Open `Monitoring` > `Activity log`.
@@ -196,7 +196,7 @@ Note: A backend pool is not required for this monitoring lab.
 
 ## Task 9 - Blob Storage Monitoring
 
-1. Go to `Resource groups` > `rg-monitoring-xx` > `stmonitorxx`.
+1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx` > `stmonitorxx`.
 2. Open `Monitoring` > `Metrics`.
 3. Set scope to your storage account.
 4. Select Blob-relevant metrics, such as:
@@ -213,7 +213,7 @@ Optional: Upload a small text file to the `labdata` container, then refresh metr
 
 ## Task 10 - Load Balancer Monitoring
 
-1. Go to `Resource groups` > `rg-monitoring-xx` > `lb-monitoring-xx`.
+1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx` > `lb-monitoring-xx`.
 2. Open `Monitoring` > `Metrics`.
 3. Inspect available metrics, such as:
    - Data path availability
@@ -252,7 +252,7 @@ Fill in this table in your lab notes.
 To reduce cost after the lab:
 
 1. Stop (deallocate) the VM when not in use.
-2. If your tutor allows cleanup, delete the resource group `rg-monitoring-xx` after completing the lab.
+2. Do not delete the assigned resource group `CloudFun-Lab-Monitoring-xx` unless your tutor explicitly instructs you to.
 
 ---
 
