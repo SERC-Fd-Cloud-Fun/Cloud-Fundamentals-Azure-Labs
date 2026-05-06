@@ -1,564 +1,276 @@
-# Lab 6 - Monitoring
+# Lab 6 - Azure Monitor (Create and Monitor Resources)
 
-In this lab, you will learn how to monitor different cloud resources using Azure Monitor.
+In this lab, you will create Azure resources and then monitor them by using Azure Monitor.
 
 ## Learning Objectives
 
-[TODO: Add learning objectives here]
-
----
-
-# Lab: Azure Monitor Alerts for Cloud Resources
-
-**Module:** Cloud Fundamentals
-**Lab topic:** Monitoring cloud resources using Azure Monitor
-**Cloud platform:** Microsoft Azure
-**Subscription:** `Cloud Fundamentals Labs`
-**Resource group:** `CloudFun-Lab-Monitoring`
-**Role:** Contributor
-
-This lab is based on the Microsoft Learn tutorial **“Enable recommended alerts for an Azure virtual machine”**. The tutorial explains that once enhanced monitoring is enabled for a VM, recommended alert rules can be used to notify administrators when the VM experiences issues or performance degradation. ([Microsoft Learn][1])
-
----
-
-## 1. Aim of the Lab
-
-In this lab, you will use **Azure Monitor** to create and review monitoring alerts for cloud resources.
-
-You will focus mainly on a **Virtual Machine**, then consider how similar monitoring ideas apply to:
-
-* Virtual Machines
-* Virtual Networks
-* Blob Storage
-* Load Balancers
-
----
-
-## 2. Learning Outcomes
-
 By the end of this lab, you should be able to:
 
-1. Locate monitoring tools in the Azure Portal.
-2. View recommended alerts for an Azure VM.
-3. Configure alert thresholds and severity levels.
-4. Create or prepare an action group for email notifications.
-5. View and manage created alert rules.
-6. Explain why monitoring and alerts are important in cloud computing.
-
-Microsoft Learn states that this tutorial covers enabling recommended VM alerts, configuring alert thresholds and severity, setting up email notifications using action groups, and viewing created alert rules. ([Microsoft Learn][1])
+1. Create core Azure resources for a monitoring scenario.
+2. Use Azure Monitor to view metrics and logs.
+3. Create and review VM alert rules.
+4. Explore monitoring for VNets, Blob storage, and Load Balancers.
+5. Explain why monitoring is important for cloud operations.
 
 ---
 
-## 3. Before You Start
+## Lab Scope
 
-Make sure you can sign in to the Azure Portal.
+You will create and monitor the following resources:
 
-You must use:
+1. Virtual Machine (VM)
+2. Virtual Network (VNet)
+3. Storage Account (Blob)
+4. Load Balancer
 
-**Subscription:** `Cloud Fundamentals Labs`
-**Resource group:** `CloudFun-Lab-Monitoring`
-
-You have **Contributor** access to this resource group. This means you can make changes, so work carefully.
-
-### Important Rules
-
-Do not:
-
-* Delete any resources.
-* Create resources outside the given resource group.
-* Change resources belonging to another student.
-* Change network security rules unless your tutor tells you to.
-* Create expensive resources.
+Use low-cost settings and only create resources in your assigned subscription and resource group.
 
 ---
 
-# Task 1: Open the Correct Resource Group
+## Before You Start
 
-## Steps
-
-1. Sign in to the **Azure Portal**.
-
-2. In the search bar at the top, search for:
-
-   `Resource groups`
-
-3. Open **Resource groups**.
-
-4. Select:
-
-   `CloudFun-Lab-Monitoring`
-
-5. Check that the subscription is:
-
-   `Cloud Fundamentals Labs`
-
-6. Look at the list of resources in the resource group.
-
-You should see resources such as:
-
-* A Virtual Machine
-* A Virtual Network
-* A Storage Account
-* A Load Balancer
-
-## Evidence Required
-
-Take a screenshot showing:
-
-* The resource group name.
-* The subscription name.
-* The list of resources.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. What is the name of the resource group?
-2. What is the name of the subscription?
-3. What types of resources can you see?
+1. Sign in to the Azure portal: https://portal.azure.com
+2. Confirm your assigned subscription with your tutor.
+3. Choose a region close to your location.
+4. Use this naming pattern (replace `xx` with your initials or student ID):
+   - Resource group: `rg-monitoring-xx`
+   - VNet: `vnet-monitoring-xx`
+   - VM: `vm-monitoring-xx`
+   - Storage account: `stmonitorxx` (must be globally unique, lowercase, no hyphens)
+   - Load balancer: `lb-monitoring-xx`
 
 ---
 
-# Task 2: Open Azure Monitor
+## Task 1 - Create a Resource Group
 
-## Steps
-
-1. In the Azure Portal search bar, search for:
-
-   `Monitor`
-
-2. Open **Monitor**.
-
-3. Look at the menu on the left-hand side.
-
-4. Find the following areas:
-
-   * Metrics
-   * Alerts
-   * Logs
-   * Workbooks
-   * Activity log
-
-## Evidence Required
-
-Take a screenshot of the Azure Monitor menu.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. What is Azure Monitor used for?
-2. What is the difference between a metric and an alert?
-3. Why is monitoring important in cloud computing?
+1. In Azure portal, search for `Resource groups`.
+2. Select `+ Create`.
+3. Set:
+   - Subscription: your assigned subscription
+   - Resource group: `rg-monitoring-xx`
+   - Region: your chosen region
+4. Select `Review + create`, then `Create`.
 
 ---
 
-# Task 3: Open the Virtual Machine Monitoring Page
+## Task 2 - Create a Virtual Network
 
-Microsoft Learn explains that recommended alert rules are available from the VM menu by selecting **Alerts** in the **Monitoring** section, then selecting **View + set up** or **Set up recommended alerts**. ([Microsoft Learn][1])
-
-## Steps
-
-1. Return to the resource group:
-
-   `CloudFun-Lab-Monitoring`
-
-2. Select one of the **Virtual Machine** resources.
-
-3. On the left-hand menu, find the **Monitoring** section.
-
-4. Select **Alerts**.
-
-5. Look for one of the following options:
-
-   * **View + set up**
-   * **Set up recommended alerts**
-   * **Recommended alerts**
-
-The exact wording may vary slightly depending on the Azure Portal layout.
-
-## Evidence Required
-
-Take a screenshot showing the VM **Alerts** page.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. What is the name of the VM you selected?
-2. Where did you find the Alerts option?
-3. Why might a VM need alerts?
+1. Search for `Virtual networks`.
+2. Select `+ Create`.
+3. Configure:
+   - Resource group: `rg-monitoring-xx`
+   - Name: `vnet-monitoring-xx`
+   - Region: same as resource group
+4. In `IP addresses`, keep default IPv4 range.
+5. Keep one default subnet (or create `subnet-default`).
+6. Select `Review + create`, then `Create`.
 
 ---
 
-# Task 4: View Recommended Alert Rules
+## Task 3 - Create a Virtual Machine
 
-Azure Monitor provides recommended alert rules for common VM performance scenarios. These can help administrators quickly monitor common problems such as performance degradation. ([Microsoft Learn][1])
+1. Search for `Virtual machines`.
+2. Select `+ Create` > `Azure virtual machine`.
+3. In `Basics`, configure:
+   - Resource group: `rg-monitoring-xx`
+   - Virtual machine name: `vm-monitoring-xx`
+   - Region: same region
+   - Availability options: `No infrastructure redundancy required`
+   - Image: `Ubuntu Server 22.04 LTS` (or tutor-approved image)
+   - Size: choose a small size (for example `Standard_B1s`)
+   - Authentication type: `Password` or `SSH public key`
+4. In `Networking`, ensure:
+   - Virtual network: `vnet-monitoring-xx`
+   - Public inbound ports: `None` (recommended for this lab)
+5. Keep remaining settings at defaults unless instructed.
+6. Select `Review + create`, then `Create`.
 
-## Steps
-
-1. On the VM **Alerts** page, select:
-
-   **View + set up**
-
-   or
-
-   **Set up recommended alerts**
-
-2. Review the list of recommended alert rules.
-
-3. Look for alerts related to common VM issues, such as:
-
-   * CPU usage
-   * Memory availability
-   * Disk activity
-   * Network activity
-   * VM availability
-
-4. Do not save anything yet.
-
-## Evidence Required
-
-Take a screenshot of the recommended alert rules list.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. Name two recommended alert rules shown for the VM.
-2. What problem could a high CPU alert help detect?
-3. What problem could a low memory alert help detect?
+Note: You do not need to log in to the VM for this lab.
 
 ---
 
-# Task 5: Configure Alert Thresholds
+## Task 4 - Create a Storage Account for Blob Monitoring
 
-Microsoft Learn explains that students can select which recommended rules to create and can also change the recommended threshold. ([Microsoft Learn][1])
+1. Search for `Storage accounts`.
+2. Select `+ Create`.
+3. Configure:
+   - Resource group: `rg-monitoring-xx`
+   - Storage account name: `stmonitorxx`
+   - Region: same region
+   - Primary service: `Azure Blob Storage or Azure Data Lake Storage Gen2`
+   - Performance: `Standard`
+   - Redundancy: `LRS`
+4. Select `Review + create`, then `Create`.
 
-## Steps
+### Create a Blob Container
 
-1. Expand one of the recommended alert rules.
-2. Look at the alert condition.
-3. Find the threshold value.
-4. Choose one alert rule to inspect more closely.
-
-For example, you may see a rule similar to:
-
-* CPU greater than a percentage value.
-* Available memory below a specific value.
-* Disk read or write activity above a specific value.
-
-5. Do not choose an extreme value.
-6. If your tutor asks you to edit a threshold, use a sensible value.
-
-Example:
-
-| Metric           | Example threshold              |
-| ---------------- | ------------------------------ |
-| Percentage CPU   | Greater than 80%               |
-| Available memory | Less than recommended value    |
-| Disk activity    | Greater than recommended value |
-
-## Evidence Required
-
-Take a screenshot showing the alert rule details and threshold.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. Which alert rule did you inspect?
-2. What metric does it monitor?
-3. What threshold value was shown?
-4. What might happen if the threshold is set too low?
-5. What might happen if the threshold is set too high?
+1. Open your new storage account.
+2. Go to `Data storage` > `Containers`.
+3. Select `+ Container`.
+4. Name it `labdata`.
+5. Set public access level to `Private (no anonymous access)`.
+6. Select `Create`.
 
 ---
 
-# Task 6: Configure Alert Severity
+## Task 5 - Create a Load Balancer
 
-Microsoft Learn states that each alert rule can be expanded to view its details, and that the default severity may be **Informational**. It also explains that the severity can be changed to levels such as **Warning** or **Error**, depending on how critical the condition is. ([Microsoft Learn][1])
+1. Search for `Load balancers`.
+2. Select `+ Create`.
+3. Configure:
+   - Resource group: `rg-monitoring-xx`
+   - Name: `lb-monitoring-xx`
+   - Region: same region
+   - Type: `Public`
+   - SKU: `Standard`
+4. Create a new public IP with a clear name (for example `pip-lb-monitoring-xx`).
+5. Select `Review + create`, then `Create`.
 
-## Steps
-
-1. Expand one of the recommended alert rules.
-2. Find the **Severity** setting.
-3. Review the available severity options.
-4. Choose a suitable severity level.
-
-Suggested examples:
-
-| Alert type                    | Suggested severity |
-| ----------------------------- | ------------------ |
-| High CPU usage                | Warning            |
-| VM unavailable                | Error              |
-| Disk activity high            | Warning            |
-| Informational monitoring only | Informational      |
-
-5. Do not save yet unless instructed by your tutor.
-
-## Evidence Required
-
-Take a screenshot showing the severity setting.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. What severity level did you choose?
-2. Why did you choose that severity?
-3. What is the difference between an informational alert and an error alert?
+Note: A backend pool is not required for this monitoring lab.
 
 ---
 
-# Task 7: Set Up Email Notification Using an Action Group
+## Task 6 - Open Azure Monitor
 
-Microsoft Learn explains that email notifications can be enabled by providing an email address, and that an **action group** can be created using that address. If an action group already exists, it can be selected instead. ([Microsoft Learn][1])
-
-## Steps
-
-1. In the recommended alerts setup screen, look for the notification or action group section.
-2. Check whether **Email** is enabled.
-3. Enter your student email address only if your tutor tells you to do so.
-4. If an action group has already been provided, select it.
-5. If you are asked to create a new action group, use a clear name.
-
-Example action group name:
-
-`StudentName-VM-Alert-ActionGroup`
-
-6. Review the settings before saving.
-
-## Evidence Required
-
-Take a screenshot showing the notification or action group configuration.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. What is an action group?
-2. What type of notification did you configure?
-3. Why is it useful to send an email when an alert is triggered?
+1. Search for `Monitor` in the Azure portal.
+2. Open `Monitor`.
+3. In the left menu, locate:
+   - Metrics
+   - Alerts
+   - Activity log
+   - Logs
+   - Workbooks
 
 ---
 
-# Task 8: Save the Alert Rules
+## Task 7 - VM Monitoring and Alerts
 
-Microsoft Learn instructs users to select **Save** to create the alert rules. ([Microsoft Learn][1])
+### 7A. Open VM Monitoring
 
-Only complete this task if your tutor gives permission.
+1. Go to `Resource groups` > `rg-monitoring-xx`.
+2. Open `vm-monitoring-xx`.
+3. In the left menu, open `Monitoring` > `Alerts`.
 
-## Steps
+### 7B. Configure Recommended VM Alerts
 
-1. Review the alert rules you selected.
+1. Select one of these options if shown:
+   - `View + set up`
+   - `Set up recommended alerts`
+   - `Recommended alerts`
+2. Review suggested rules (CPU, memory, disk, availability, networking).
+3. Expand at least two rules and inspect:
+   - Metric
+   - Threshold
+   - Evaluation period
+   - Severity
+4. Keep sensible thresholds (example: CPU > 80%).
 
-2. Check:
+### 7C. Configure an Action Group (Email Optional)
 
-   * Alert names
-   * Thresholds
-   * Severity levels
-   * Email/action group settings
+1. In alert setup, find the `Action group` section.
+2. Select an existing action group, or create one:
+   - Name: `ag-monitoring-xx`
+   - Notification type: `Email/SMS message/Push/Voice`
+   - Email: use your student email only if your tutor allows it
+3. Save the action group.
 
-3. Select **Save**.
+### 7D. Create Alert Rules
 
-## Evidence Required
-
-Take a screenshot before or after saving the alert rules.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. How many alert rules did you create?
-2. Which alert rule do you think is the most important?
-3. Why should cloud administrators review alert settings before saving them?
-
----
-
-# Task 9: View Created Alert Rules
-
-After alert rule creation is complete, Microsoft Learn explains that users can view the VM alerts screen and select **Alert rules** to see the rules that were just created. Users can also open a rule to view its details or modify its threshold. ([Microsoft Learn][1])
-
-## Steps
-
-1. Open the VM again.
-2. Go to **Monitoring** > **Alerts**.
-3. Select **Alert rules**.
-4. Find the alert rules you created.
-5. Open one alert rule.
-6. Review:
-
-   * Scope
-   * Condition
-   * Threshold
-   * Severity
-   * Action group
-
-## Evidence Required
-
-Take a screenshot showing the list of alert rules.
-
-Take another screenshot showing the details of one alert rule.
-
-## Questions
-
-Answer these in your lab notes:
-
-1. Where can you view created alert rules?
-2. What resource is the alert rule connected to?
-3. What condition causes the alert to trigger?
-4. How could you change the alert later?
+1. Choose at least two VM alerts to create.
+2. Confirm severity and threshold values.
+3. Select `Save` or `Create`.
+4. Return to `Monitoring` > `Alerts` > `Alert rules` and verify rules exist.
 
 ---
 
-# Task 10: Consider Monitoring Other Resources
+## Task 8 - VNet Monitoring
 
-You have now created or reviewed VM alert rules. Monitoring is not only useful for VMs. Cloud administrators also monitor networking, storage, and load balancing.
-
-Use the resource group to briefly inspect monitoring options for the following resources.
-
----
-
-## 10A: Virtual Network Monitoring
-
-### Steps
-
-1. Go to the resource group.
-2. Open the **Virtual Network**.
-3. Find the **Monitoring** section.
-4. Open:
-
-   * Metrics
-   * Activity log
-
-### Questions
-
-1. What monitoring options are available for the VNet?
-2. What does the Activity log show?
-3. Why is network monitoring important?
-
-### Evidence
-
-Take a screenshot of the VNet monitoring page.
+1. Go to `Resource groups` > `rg-monitoring-xx` > `vnet-monitoring-xx`.
+2. Open `Monitoring` > `Metrics`.
+3. Select a metric namespace and inspect available metrics.
+4. Open `Monitoring` > `Activity log`.
+5. Filter activity log to the last 24 hours.
+6. Identify at least one operation (for example create/update action).
 
 ---
 
-## 10B: Blob Storage Monitoring
+## Task 9 - Blob Storage Monitoring
 
-### Steps
+1. Go to `Resource groups` > `rg-monitoring-xx` > `stmonitorxx`.
+2. Open `Monitoring` > `Metrics`.
+3. Set scope to your storage account.
+4. Select Blob-relevant metrics, such as:
+   - Transactions
+   - Ingress
+   - Egress
+   - Availability
+   - Success E2E Latency
+5. Change the chart time range (for example Last 1 hour, Last 24 hours).
 
-1. Go to the resource group.
-2. Open the **Storage Account**.
-3. Go to **Monitoring** > **Metrics**.
-4. Look for Blob-related metrics such as:
-
-   * Transactions
-   * Ingress
-   * Egress
-   * Availability
-   * Latency
-
-### Questions
-
-1. What is Blob storage used for?
-2. What does Ingress mean?
-3. What does Egress mean?
-4. Why might storage latency matter?
-
-### Evidence
-
-Take a screenshot of a storage metric chart.
+Optional: Upload a small text file to the `labdata` container, then refresh metrics after a few minutes.
 
 ---
 
-## 10C: Load Balancer Monitoring
+## Task 10 - Load Balancer Monitoring
 
-### Steps
-
-1. Go to the resource group.
-2. Open the **Load Balancer**.
-3. Go to **Monitoring**.
-4. Open:
-
-   * Metrics
-   * Insights, if available
-5. Look for metrics such as:
-
-   * Health probe status
-   * Data path availability
-   * Byte count
-   * Packet count
-
-### Questions
-
-1. What is the purpose of a load balancer?
-2. What does a health probe check?
-3. Why is load balancer monitoring important?
-
-### Evidence
-
-Take a screenshot of the Load Balancer monitoring page.
+1. Go to `Resource groups` > `rg-monitoring-xx` > `lb-monitoring-xx`.
+2. Open `Monitoring` > `Metrics`.
+3. Inspect available metrics, such as:
+   - Data path availability
+   - Health probe status
+   - Byte count
+   - Packet count
+4. If `Insights` is available, open it and review summary information.
 
 ---
 
-# Task 11: Create a Simple Monitoring Summary Table
+## Task 11 - Complete a Monitoring Summary
 
-Complete the table below in your lab report.
+Fill in this table in your lab notes.
 
-| Resource        | Monitoring Feature Used | Example Metric or Alert | Why It Matters |
-| --------------- | ----------------------- | ----------------------- | -------------- |
-| Virtual Machine | Alerts                  |                         |                |
-| Virtual Network | Metrics or Activity log |                         |                |
-| Blob Storage    | Metrics                 |                         |                |
-| Load Balancer   | Metrics or Insights     |                         |                |
-
----
-
-# Task 12: Reflection
-
-Write a short reflection of **150–250 words**.
-
-Your reflection should answer:
-
-1. Why are alerts useful in cloud computing?
-2. What could happen if a VM problem is not detected quickly?
-3. Why might a cloud administrator want alerts for storage or load balancing?
-4. What did you find easiest or hardest in this lab?
+| Resource | Monitoring feature used | Example metric or alert | Why it matters |
+| --- | --- | --- | --- |
+| Virtual Machine | Alerts |  |  |
+| Virtual Network | Metrics or Activity log |  |  |
+| Blob Storage | Metrics |  |  |
+| Load Balancer | Metrics or Insights |  |  |
 
 ---
 
-# Submission Checklist
+## Knowledge Check Questions
 
-Submit a short lab report containing:
-
-* Your name and student number.
-* Screenshot of the correct resource group.
-* Screenshot of Azure Monitor.
-* Screenshot of VM recommended alerts.
-* Screenshot of one alert threshold.
-* Screenshot of alert severity.
-* Screenshot of action group or notification settings.
-* Screenshot of created alert rules, if saved.
-* Screenshots for VNet, Blob Storage, and Load Balancer monitoring.
-* Completed monitoring summary table.
-* Answers to all questions.
-* 150–250 word reflection.
+1. What is the difference between a metric and an alert?
+2. Why are thresholds important when creating alerts?
+3. Why would a cloud administrator monitor both compute and networking resources?
+4. What does ingress and egress mean for Blob storage?
+5. Why is load balancer health monitoring important for application availability?
 
 ---
 
-# Key Terms
+## Cost and Cleanup Guidance
 
-| Term          | Meaning                                                                              |
-| ------------- | ------------------------------------------------------------------------------------ |
-| Azure Monitor | Azure service used to collect, view, and respond to monitoring data.                 |
-| Metric        | A numerical measurement, such as CPU percentage or network traffic.                  |
-| Alert rule    | A rule that checks for a condition and triggers an alert when that condition is met. |
-| Threshold     | The value that causes an alert to trigger.                                           |
-| Severity      | A rating that shows how important or serious an alert is.                            |
-| Action group  | A set of actions, such as sending an email, that happen when an alert fires.         |
-| Ingress       | Data entering a service.                                                             |
-| Egress        | Data leaving a service.                                                              |
-| Health probe  | A load balancer check used to see whether a backend resource is healthy.             |
+To reduce cost after the lab:
 
-[1]: https://learn.microsoft.com/en-us/azure/azure-monitor/vm/tutorial-alerts "Enable recommended alerts for an Azure virtual machine - Azure Monitor | Microsoft Learn"
+1. Stop (deallocate) the VM when not in use.
+2. If your tutor allows cleanup, delete the resource group `rg-monitoring-xx` after completing the lab.
+
+---
+
+## Key Terms
+
+| Term | Meaning |
+| --- | --- |
+| Azure Monitor | Azure service for collecting and analyzing telemetry from resources. |
+| Metric | Numeric measurement over time (for example CPU percentage). |
+| Alert rule | A rule that triggers when a condition is met. |
+| Threshold | The trigger value for an alert condition. |
+| Severity | Importance level of an alert (for example informational, warning, critical). |
+| Action group | Notification/action target used by alert rules (email, SMS, webhook, etc.). |
+| Activity log | Control-plane record of create, update, and delete operations in Azure. |
+| Ingress | Data entering a service. |
+| Egress | Data leaving a service. |
+| Health probe | A check used by load balancers to determine backend health. |
+
+---
+
+Reference: https://learn.microsoft.com/azure/azure-monitor/vm/tutorial-alerts
