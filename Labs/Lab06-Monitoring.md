@@ -74,7 +74,7 @@ Use low-cost settings and only create resources in your assigned subscription an
    - Virtual machine name: `vm-monitoring-xx`
    - Region: same region
    - Availability options: `No infrastructure redundancy required`
-   - Image: `Ubuntu Server 22.04 LTS` (or tutor-approved image)
+   - Image: `Ubuntu Server 24.04 LTS` (or tutor-approved image)
    - Size: choose a small size (for example `Standard_B1s`)
    - Authentication type: `Password` or `SSH public key`
 4. In `Networking`, ensure:
@@ -143,15 +143,59 @@ Note: A backend pool is not required for this monitoring lab.
 
 ---
 
-## Task 7 - VM Monitoring and Alerts
+## Task 7 - Create VM Performance Charts
 
-### 7A. Open VM Monitoring
+Before creating alerts, create baseline performance charts for your VM.
+
+### 7A. Open VM Metrics
+
+1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx`.
+2. Open `vm-monitoring-xx`.
+3. In the left menu, open `Monitoring` > `Metrics`.
+4. Set:
+   - Scope: `vm-monitoring-xx`
+   - Time range: `Last 24 hours`
+   - Aggregation: `Average` (where available)
+
+### 7B. Create a CPU Chart
+
+1. In the metric selector, choose `Percentage CPU`.
+2. Keep chart type as `Line chart`.
+3. Set granularity to `Auto` or `1 minute`.
+4. Rename the chart title to `VM CPU Usage`.
+
+### 7C. Create a Network Throughput Chart
+
+1. Select `+ Add metric`.
+2. Add `Network In Total`.
+3. Select `+ Add metric` again.
+4. Add `Network Out Total`.
+5. Rename the chart title to `VM Network In/Out`.
+
+### 7D. Create a Disk Activity Chart
+
+1. Select `+ New chart`.
+2. Add `Disk Read Bytes`.
+3. Select `+ Add metric` and add `Disk Write Bytes`.
+4. Rename the chart title to `VM Disk Read/Write`.
+
+### 7E. Save Charts for Reuse
+
+1. Select `Save to dashboard` or `Pin to dashboard`.
+2. Use a clear dashboard name, for example `monitoring-dashboard-xx`.
+3. Confirm all three VM charts are visible on the dashboard.
+
+---
+
+## Task 8 - VM Monitoring and Alerts
+
+### 8A. Open VM Monitoring
 
 1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx`.
 2. Open `vm-monitoring-xx`.
 3. In the left menu, open `Monitoring` > `Alerts`.
 
-### 7B. Configure Recommended VM Alerts
+### 8B. Configure Recommended VM Alerts
 
 1. Select one of these options if shown:
    - `View + set up`
@@ -165,7 +209,7 @@ Note: A backend pool is not required for this monitoring lab.
    - Severity
 4. Keep sensible thresholds (example: CPU > 80%).
 
-### 7C. Configure an Action Group (Email Optional)
+### 8C. Configure an Action Group (Email Optional)
 
 1. In alert setup, find the `Action group` section.
 2. Select an existing action group, or create one:
@@ -174,7 +218,7 @@ Note: A backend pool is not required for this monitoring lab.
    - Email: use your student email only if your tutor allows it
 3. Save the action group.
 
-### 7D. Create Alert Rules
+### 8D. Create Alert Rules
 
 1. Choose at least two VM alerts to create.
 2. Confirm severity and threshold values.
@@ -183,7 +227,7 @@ Note: A backend pool is not required for this monitoring lab.
 
 ---
 
-## Task 8 - VNet Monitoring
+## Task 9 - VNet Monitoring
 
 1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx` > `vnet-monitoring-xx`.
 2. Open `Monitoring` > `Metrics`.
@@ -194,7 +238,7 @@ Note: A backend pool is not required for this monitoring lab.
 
 ---
 
-## Task 9 - Blob Storage Monitoring
+## Task 10 - Blob Storage Monitoring
 
 1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx` > `stmonitorxx`.
 2. Open `Monitoring` > `Metrics`.
@@ -211,7 +255,7 @@ Optional: Upload a small text file to the `labdata` container, then refresh metr
 
 ---
 
-## Task 10 - Load Balancer Monitoring
+## Task 11 - Load Balancer Monitoring
 
 1. Go to `Resource groups` > `CloudFun-Lab-Monitoring-xx` > `lb-monitoring-xx`.
 2. Open `Monitoring` > `Metrics`.
@@ -224,7 +268,7 @@ Optional: Upload a small text file to the `labdata` container, then refresh metr
 
 ---
 
-## Task 11 - Complete a Monitoring Summary
+## Task 12 - Complete a Monitoring Summary
 
 Fill in this table in your lab notes.
 
